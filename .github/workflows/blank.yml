@@ -55,10 +55,10 @@ jobs:
     - name: Send email with Trivy report
       uses: dawidd6/action-send-mail@v3
       with:
-        smtp-server: smtp.gmail.com
-        smtp-port: 587
-        smtp-username: ${{ secrets.SMTP_USERNAME }}  # Add this as a secret in GitHub
-        smtp-password: ${{ secrets.SMTP_PASSWORD }}  # Add this as a secret in GitHub
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.SMTP_USERNAME }}  # Add this as a secret in GitHub
+        password: ${{ secrets.SMTP_PASSWORD }}  # Add this as a secret in GitHub
         from: ${{ secrets.SMTP_USERNAME }}
         to: recipient@example.com  # Change this to the recipient's email
         subject: Trivy Security Scan Report
