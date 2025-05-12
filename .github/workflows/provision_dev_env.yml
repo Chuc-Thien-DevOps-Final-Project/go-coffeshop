@@ -125,7 +125,7 @@ jobs:
       
             # Khởi động Docker Compose
             docker-compose up -d
-      EOF
+          EOF
           
           
 
