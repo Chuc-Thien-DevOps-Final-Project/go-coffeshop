@@ -25,7 +25,7 @@ jobs:
       - name: Set up SSH key
         run: |
           ls
-          cd terraform-infra/envs/dev
+          cd infrastructure/terraform-infra/envs/dev
           ls
           echo "${{ secrets.SSH_KEY }}" > tct-ssh-key.pem
           chmod 600 emr.pem
@@ -57,7 +57,7 @@ jobs:
       - name: Initialize Terraform
         run: |
           ls
-          cd terraform-infra/envs/dev
+          cd infrastructure/terraform-infra/envs/dev
           ls
           terraform init
           terraform validate
@@ -65,7 +65,7 @@ jobs:
           terraform apply -auto-approve
       - name: Update HOST variable
         run: |       
-          cd terraform-infra/envs/dev
+          cd infrastructure/terraform-infra/envs/dev
           export DEV_ENV=$(terraform output -raw ec2_module_instance_id)
           echo $DEV_ENV
           echo $DEV_ENV > host_ip.txt
