@@ -92,14 +92,28 @@ jobs:
            sudo systemctl enable docker
            sudo usermod -aG docker $USER
            newgrp docker
-           https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+           
+           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+           unzip awscliv2.zip
+           sudo ./aws/install --update
+           mkdir -p ~/.aws
+           touch ~/.aws/credentials
+           echo "${{ secrets.AWS_KEY }}" > ~/.aws/credentials
+           aws sts get-caller-identity
+           aws configure set region us-east-1
+
+           aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 492804330065.dkr.ecr.us-east-2.amazonaws.com
+           
+           sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
            sudo chmod +x /usr/local/bin/docker-compose
            docker-compose version
+           sudo yum update -y
+           sudo yum install -y git curl --skip-broken
            git clone https://github.com/Chuc-Thien-DevOps-Final-Project/go-coffeshop.git
            ls
            cd go-coffeshop
            sed -i "s|localhost|$DEV_ENV|g" docker-compose.yml
-           docker compose up -d
+           docker-compose up -d
           EOF
           
           
