@@ -70,11 +70,12 @@ jobs:
           echo $DEV_ENV
           echo $DEV_ENV > host_ip.txt
           export GITHUB_TOKEN=${{ secrets.GIT_TOKEN_KEY }}
-          curl -X PATCH \                                                                                                                                               
-           -H "Authorization: Bearer $GITHUB_TOKEN" \
-           -H "Accept: application/vnd.github+json" \
-           https://api.github.com/repos/Chuc-Thien-DevOps-Final-Project/go-coffeshop/actions/variables/DEV_ENV \
-           -d "{\"name\":\"DEV_ENV\",\"value\":\"$DEV_ENV\"}"
+          curl -X PATCH \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/Chuc-Thien-DevOps-Final-Project/go-coffeshop/actions/variables/DEV_ENV \
+            -d '{"name":"DEV_ENV","value":"'"$DEV_ENV"'"}'
+
       - name: Setup Dev Env
         run: |
           cd infrastructure/terraform-infra/envs/dev
