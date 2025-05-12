@@ -66,7 +66,7 @@ jobs:
       - name: Update HOST variable
         run: |       
           cd infrastructure/terraform-infra/envs/dev
-          export DEV_ENV=$(terraform output -raw ec2.instance_public_ip)
+          export DEV_ENV=$(terraform output -raw ec2_module_public_ip)
           echo $DEV_ENV
           echo $DEV_ENV > host_ip.txt
           export GITHUB_TOKEN=${{ secrets.GIT_TOKEN_KEY }}
