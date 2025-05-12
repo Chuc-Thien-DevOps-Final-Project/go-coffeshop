@@ -115,7 +115,7 @@ jobs:
         git config --global user.name "tranchucthien"
     - name: Push code to branch test
       run: |   
-         git add .
+         git add docker-compose.yml
          git commit -m "Update image version for docker compose"
          git push 
         
