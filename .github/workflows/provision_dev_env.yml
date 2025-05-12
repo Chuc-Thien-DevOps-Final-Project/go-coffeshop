@@ -81,28 +81,28 @@ jobs:
           cd infrastructure/terraform-infra/envs/dev
           ls
           export DEV_ENV=$(terraform output -raw ec2_module_public_ip)
-          ssh -i "tct-ssh-key.pem" -o StrictHostKeyChecking=no ec2-user@$DEV_ENV << 'EOF'
-            export DEV_ENV=$DEV_ENV
-            echo 'DEV_ENV inside remote: '$DEV_ENV
-           
-          # Cập nhật hệ thống
+          
+          ssh -i "tct-ssh-key.pem" -o StrictHostKeyChecking=no ec2-user@$DEV_ENV \
+          "DEV_ENV=$DEV_ENV bash -s" << 'EOF'
+            echo "DEV_ENV inside remote: $DEV_ENV"
+            
+            # Cập nhật hệ thống
             sudo yum update -y
             sudo yum install -y git curl unzip --skip-broken
-           
-          # Cài đặt Docker
+            
+            # Cài đặt Docker
             sudo amazon-linux-extras enable docker
             sudo yum install -y docker
             sudo systemctl start docker
             sudo systemctl enable docker
             sudo usermod -aG docker ec2-user
             newgrp docker
-
-          # Cài đặt Docker Compose
+      
+            # Cài đặt Docker Compose
             sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
             docker-compose version
-
-
+      
             # Cài đặt AWS CLI
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip -o awscliv2.zip
@@ -112,21 +112,20 @@ jobs:
             echo "${{ secrets.AWS_KEY }}" > ~/.aws/credentials
             aws sts get-caller-identity
             aws configure set region us-east-1
-
+      
             # Đăng nhập vào ECR
             aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 492804330065.dkr.ecr.us-east-2.amazonaws.com
             
             # Clone project
             git clone https://github.com/Chuc-Thien-DevOps-Final-Project/go-coffeshop.git
             cd go-coffeshop
-
+      
             # Cập nhật docker-compose.yml
             sed -i "s|localhost|$DEV_ENV|g" docker-compose.yml
-
+      
             # Khởi động Docker Compose
             docker-compose up -d
-
-          EOF
+      EOF
           
           
 
