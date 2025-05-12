@@ -33,7 +33,6 @@ jobs:
         key: ${{ runner.os }}-trivy-db
         restore-keys: |
           ${{ runner.os }}-trivy-db
-
     - name: Install Trivy
       run: |
         sudo apt-get install wget apt-transport-https gnupg lsb-release
@@ -41,7 +40,6 @@ jobs:
         echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
         sudo apt-get update
         sudo apt-get install trivy
-
     - name: Scan image by Trivy
       run: |
         # # trivy image cuongopswat/go-coffeeshop-web --severity CRITICAL  #--exit-code 1
@@ -50,7 +48,6 @@ jobs:
         # trivy image cuongopswat/go-coffeeshop-product --severity CRITICAL #--exit-code 1
         # trivy image cuongopswat/go-coffeeshop-proxy --severity CRITICAL #--exit-code 1
         # trivy image cuongopswat/go-coffeeshop-kitchen --severity CRITICAL #--exit-code 1
-
         trivy image cuongopswat/go-coffeeshop-web --severity CRITICAL --format json > trivy_report.json
         # trivy image cuongopswat/go-coffeeshop-barista --severity CRITICAL --format json >> trivy_report.json
         # trivy image cuongopswat/go-coffeeshop-counter --severity CRITICAL --format json >> trivy_report.json
@@ -108,18 +105,28 @@ jobs:
         sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" docker-compose.yml
         cat docker-compose.yml
         grep "image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web" docker-compose.yml
-
     - name: Login GitHub
       run: |
         echo "${{ secrets.GIT_TOKEN }}" > ~/.netrc
         chmod 777 ~/.netrc
         git config --global user.email "chucthien2@gmail.com"
         git config --global user.name "tranchucthien"
-    - name: Push code to branch test
+    - name: Push code to branch 
       run: |   
          git config --global user.email "chucthien2@gmail.com"
          git config --global user.name "tranchucthien"
          git add docker-compose.yml
          git commit -m "Update image version for docker compose"
          git push 
-        
+    # - name: Create Pull Request
+    #   uses: peter-evans/create-pull-request@v7
+    - name: Create PR to branch test
+      run: |
+        sudo apt-get install gh -y
+        gh auth login --with-token <<< "${{ secrets.GIT_TOKEN_KEY }}"
+        VERSION="${{ inputs.image_version }}"
+        gh pr create \
+          --base test \
+          --head "$BRANCH_NAME" \
+          --title "Update image to version $VERSION" \
+          --body "This PR updates the image version to \`$VERSION\` in docker-compose.yml"
