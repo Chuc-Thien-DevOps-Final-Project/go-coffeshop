@@ -103,5 +103,6 @@ jobs:
     - name: Update docker compose
       run: |
         sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" docker-compose.yml
-        cat docket-compose.yml
+        cat docker-compose.yml
+        grep "image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web" docker-compose.yml
         
