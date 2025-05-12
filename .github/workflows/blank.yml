@@ -129,8 +129,9 @@ jobs:
       run: |
         sudo apt-get install gh -y
         gh auth login --with-token <<< "${{ secrets.GIT_TOKEN_KEY }}"
+        VERSION="${{ inputs.image_version }}"
         gh pr create \
           --base test \
-          --head $BRANCH_NAME \
-          --title "Update image to version ${{ inputs.image_version }}" \
-          --body "This PR updates the image version to \`${{ inputs.image_version }}\` in docker-compose.yml"
+          --head "$BRANCH_NAME" \
+          --title "Update image to version $VERSION" \
+          --body "This PR updates the image version to \`$VERSION\` in docker-compose.yml"
