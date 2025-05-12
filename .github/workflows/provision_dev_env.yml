@@ -81,7 +81,7 @@ jobs:
           cd infrastructure/terraform-infra/envs/dev
           ls
           export DEV_ENV=$(terraform output -raw ec2_module_public_ip)
-          ssh -i "tct-ssh-key.pem" -o StrictHostKeyChecking=no ubuntu@$DEV_ENV << 'EOF'
+          ssh -i "tct-ssh-key.pem" -o StrictHostKeyChecking=no ec2-user@$DEV_ENV << 'EOF'
            export DEV_ENV=$DEV_ENV
            echo 'DEV_ENV inside remote: '$DEV_ENV
            sudo yum update -y
