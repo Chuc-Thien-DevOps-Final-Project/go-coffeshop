@@ -111,6 +111,7 @@ jobs:
     - name: Login GitHub
       run: |
         echo "${{ secrets.GIT_TOKEN }}" > ~/.netrc
+        chmod 777 ~/.netrc
         git config --global user.email "chucthien2@gmail.com"
         git config --global user.name "tranchucthien"
     - name: Push code to branch test
