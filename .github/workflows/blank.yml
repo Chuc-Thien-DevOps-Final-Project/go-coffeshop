@@ -102,4 +102,6 @@ jobs:
         docker push 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
     - name: Update docker compose
       run: |
-        ls
+        sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" docker-compose.yml
+        cat docket-compose.yml
+        
