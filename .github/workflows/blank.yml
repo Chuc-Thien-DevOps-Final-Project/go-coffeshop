@@ -11,7 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    permissions: # <--- Add this block here
+      contents: write # <--- This grants write access to repository content
     steps:
 
     - name: Pull images
