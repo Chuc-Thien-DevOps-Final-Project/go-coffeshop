@@ -103,7 +103,7 @@ jobs:
         
     - name: Update docker compose
       run: |
-        git checkout test
+        
         sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" docker-compose.yml
         cat docker-compose.yml
         grep "image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web" docker-compose.yml
@@ -115,5 +115,5 @@ jobs:
       run: |   
          git add .
          git commit -m "Update image version for docker compose"
-         git push origin test
+         git push 
         
