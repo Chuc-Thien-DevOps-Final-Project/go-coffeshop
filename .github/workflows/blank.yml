@@ -100,9 +100,20 @@ jobs:
         # docker push 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-barista:${{ inputs.image_version }}
         docker tag cuongopswat/go-coffeeshop-web:latest 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
         docker push 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
+        
     - name: Update docker compose
       run: |
+        git checkout test
         sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" docker-compose.yml
         cat docker-compose.yml
         grep "image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web" docker-compose.yml
+
+    - name: Login GitHub
+      run: |
+        echo "${{ secrets.GIT_TOKEN }}" > ~/.netrc
+    - name: Push code to branch test
+      run: |   
+         git add .
+         git commit -m "Update image version for docker compose"
+         git push origin test
         
