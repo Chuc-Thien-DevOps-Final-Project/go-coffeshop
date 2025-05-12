@@ -75,4 +75,20 @@ jobs:
            -H "Accept: application/vnd.github+json" \
            https://api.github.com/repos/Chuc-Thien-DevOps-Final-Project/go-coffeshop/actions/variables/DEV_ENV \
            -d "{\"name\":\"DEV_ENV\",\"value\":\"$DEV_ENV\"}"
+      - name: Setup Dev Env
+        run: |
+          cd infrastructure/terraform-infra/envs/dev
+          export DEV_ENV=$(terraform output -raw ec2_module_instance_id)
+          ssh -i "tct-ssh-key.pem" -o StrictHostKeyChecking=no ubuntu@$DEV_ENV << 'EOF'
+           sudo yum update -y
+           sudo yum update -y
+           sudo amazon-linux-extras enable docker
+           sudo yum install -y docker
+           sudo systemctl start docker
+           sudo systemctl enable docker
+           sudo usermod -aG docker $USER
+           newgrp docker
+          EOF
+          
+          
 
