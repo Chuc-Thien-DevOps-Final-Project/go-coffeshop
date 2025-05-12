@@ -28,7 +28,7 @@ jobs:
           cd infrastructure/terraform-infra/envs/dev
           ls
           echo "${{ secrets.SSH_KEY }}" > tct-ssh-key.pem
-          chmod 600 emr.pem
+          chmod 600 tct-ssh-key.pem
           ls
 
         
