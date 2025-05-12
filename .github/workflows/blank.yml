@@ -2,7 +2,12 @@ name: Docker Image CI
 
 on:
   workflow_dispatch:
-
+    inputs:
+      image_version:
+        description: 'Enter new image version (default: latest'
+        required: true
+        default: 'latest'
+        type: string
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -67,6 +72,34 @@ jobs:
         attachments: trivy_report.json
 
     - uses: actions/checkout@v4
+    - name: Install AWS CLI
+      run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+          
+    - name: Configure AWS CLI
+      run: |
+          # aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # aws configure set region us-east-1
+          # aws configure list
+          mkdir -p ~/.aws
+          touch ~/.aws/credentials
+          echo "${{ secrets.AWS_KEY }}" > ~/.aws/credentials
+          aws sts get-caller-identity
+          aws configure set region us-east-2
+          
+    - name: Login ECR private
+      run: |
+        # aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 492804330065.dkr.ecr.us-east-2.amazonaws.com
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 271718395217.dkr.ecr.us-east-1.amazonaws.com
+    - name: Tag and push image
+      run: |
+        # docker tag cuongopswat/go-coffeeshop-barista:latest 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-barista:${{ inputs.image_version }}
+        # docker push 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-barista:${{ inputs.image_version }}
+        docker tag cuongopswat/go-coffeeshop-web:latest 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
+        docker push 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
     - name: Update docker compose
       run: |
         ls
