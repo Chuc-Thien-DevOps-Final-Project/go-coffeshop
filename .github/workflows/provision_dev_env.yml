@@ -1,0 +1,78 @@
+# This is a basic workflow to help you get started with Actions
+
+name: provision_dev_env
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "test" ]
+  pull_request:
+    branches: [ "test" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  provision_infrastructure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        run: |
+          git clone https://github.com/Chuc-Thien-DevOps-Final-Project/infrastructure.git
+        
+      - name: Set up SSH key
+        run: |
+          ls
+          cd terraform-infra/envs/dev
+          ls
+          echo "${{ secrets.SSH_KEY }}" > tct-ssh-key.pem
+          chmod 600 emr.pem
+          ls
+
+        
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+          
+      - name: Configure AWS CLI
+        run: |
+            # aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+            # aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            # aws configure set region us-east-1
+            # aws configure list
+            mkdir -p ~/.aws
+            touch ~/.aws/credentials
+            echo "${{ secrets.AWS_KEY }}" > ~/.aws/credentials
+            aws sts get-caller-identity
+            aws configure set region us-east-1
+        
+      - name: Install Terraform
+        run: |
+          sudo snap install terraform --classic
+          sudo terraform version
+      - name: Initialize Terraform
+        run: |
+          ls
+          cd terraform-infra/envs/dev
+          ls
+          terraform init
+          terraform validate
+          terraform plan
+          terraform apply -auto-approve
+      - name: Update HOST variable
+        run: |       
+          cd terraform-infra/envs/dev
+          export DEV_ENV=$(terraform output -raw ec2_module_instance_id)
+          echo $DEV_ENV
+          echo $DEV_ENV > host_ip.txt
+          export GITHUB_TOKEN=${{ secrets.GIT_TOKEN_KEY }}
+          curl -X PATCH \                                                                                                                                               
+           -H "Authorization: Bearer $GITHUB_TOKEN" \
+           -H "Accept: application/vnd.github+json" \
+           https://api.github.com/repos/Chuc-Thien-DevOps-Final-Project/go-coffeshop/actions/variables/DEV_ENV \
+           -d "{\"name\":\"DEV_ENV\",\"value\":\"$DEV_ENV\"}"
+
