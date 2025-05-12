@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       image_version:
-        description: 'Enter new image version (default: latest'
+        description: 'Enter new image version (default: latest)'
         required: true
         default: 'latest'
         type: string
@@ -90,14 +90,14 @@ jobs:
           
     - name: Login ECR private
       run: |
-        # aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 492804330065.dkr.ecr.us-east-2.amazonaws.com
-        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 271718395217.dkr.ecr.us-east-1.amazonaws.com
+        aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 492804330065.dkr.ecr.us-east-2.amazonaws.com
+        #aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 271718395217.dkr.ecr.us-east-1.amazonaws.com
     - name: Tag and push image
       run: |
-        # docker tag cuongopswat/go-coffeeshop-barista:latest 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-barista:${{ inputs.image_version }}
-        # docker push 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-barista:${{ inputs.image_version }}
-        docker tag cuongopswat/go-coffeeshop-web:latest 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
-        docker push 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
+        docker tag cuongopswat/go-coffeeshop-web:latest 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
+        docker push 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
+        #docker tag cuongopswat/go-coffeeshop-web:latest 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
+        #docker push 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
         
     - name: Update docker compose
       run: |
