@@ -65,7 +65,7 @@ jobs:
         username: ${{ secrets.SMTP_USERNAME }}  # Add this as a secret in GitHub
         password: ${{ secrets.SMTP_PASSWORD }}  # Add this as a secret in GitHub
         from: ${{ secrets.SMTP_USERNAME }}
-        to: recipient@example.com  # Change this to the recipient's email
+        to: ${{ secrets.SMTP_USERNAME }}  # Change this to the recipient's email
         subject: Trivy Security Scan Report
         body: |
           The Trivy security scan has completed. Please find the attached report.
