@@ -115,11 +115,22 @@ jobs:
         chmod 777 ~/.netrc
         git config --global user.email "chucthien2@gmail.com"
         git config --global user.name "tranchucthien"
-    - name: Push code to branch test
+    - name: Push code to branch 
       run: |   
          git config --global user.email "chucthien2@gmail.com"
          git config --global user.name "tranchucthien"
          git add docker-compose.yml
          git commit -m "Update image version for docker compose"
          git push 
-        
+
+    # - name: Create Pull Request
+    #   uses: peter-evans/create-pull-request@v7
+    - name: Create PR to branch test
+      run: |
+        sudo apt-get install gh -y
+        gh auth login --with-token <<< "${{ secrets.GIT_TOKEN_KEY }}"
+        gh pr create \
+          --base test \
+          --head $BRANCH_NAME \
+          --title "Update image to version ${{ inputs.image_version }}" \
+          --body "This PR updates the image version to \`${{ inputs.image_version }}\` in docker-compose.yml"
