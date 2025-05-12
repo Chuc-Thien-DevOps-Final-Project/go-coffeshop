@@ -79,8 +79,10 @@ jobs:
       - name: Setup Dev Env
         run: |
           cd infrastructure/terraform-infra/envs/dev
-          export DEV_ENV=$(terraform output -raw ec2_module_instance_id)
+          export DEV_ENV=$(terraform output -raw ec2_module_public_ip)
           ssh -i "tct-ssh-key.pem" -o StrictHostKeyChecking=no ubuntu@$DEV_ENV << 'EOF'
+           export DEV_ENV=$DEV_ENV
+           echo 'DEV_ENV inside remote: '$DEV_ENV
            sudo yum update -y
            sudo yum update -y
            sudo amazon-linux-extras enable docker
