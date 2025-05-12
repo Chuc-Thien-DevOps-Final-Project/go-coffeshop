@@ -125,7 +125,9 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-web
-    image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web
+
+    image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:v2
+
     environment:
       REVERSE_PROXY_URL: http://localhost:5000
       WEB_PORT: 8888
