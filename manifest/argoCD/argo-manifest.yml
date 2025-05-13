@@ -7,7 +7,7 @@ spec:
   project: default # Project name in ArgoCD
 
   source:
-    repoURL: https://github.com/Chuc-Thien-DevOps-Final-Project/infrastructure
+    repoURL: https://github.com/Chuc-Thien-DevOps-Final-Project/go-coffeshop
     targetRevision: HEAD
     path: manifest
 
@@ -26,6 +26,13 @@ spec:
     - group: apps
       kind: Deployment
       name: proxy
+      namespace: default
+      jsonPointers:
+        - /spec/replicas
+
+    - group: apps
+      kind: Deployment
+      name: web
       namespace: default
       jsonPointers:
         - /spec/replicas
