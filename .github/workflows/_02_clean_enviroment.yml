@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: clean_resource
+name: Clean resources in AWS
 
 # Controls when the workflow will run
 on:
@@ -24,7 +24,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  provision_infrastructure:
+  cleaning_infrastructure:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
@@ -62,7 +62,8 @@ jobs:
         run: |
           sudo snap install terraform --classic
           sudo terraform version
-      - name: Initialize Terraform
+
+      - name: Terraform Cleanup
         run: |
           ls
           cd infrastructure/terraform-infra/envs/${{ github.event.inputs.env_option }}
@@ -71,3 +72,22 @@ jobs:
           terraform validate
           terraform plan
           terraform destroy -auto-approve
+
+      - name: Send email notification
+        if: always()  # This ensures the email is sent even if the previous steps fail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}  # Add this as a secret in GitHub
+          password: ${{ secrets.SMTP_PASSWORD }}  # Add this as a secret in GitHub
+          from: ${{ secrets.SMTP_USERNAME }}
+          to: ${{ secrets.SMTP_USERNAME }}  # Change this to the recipient's email
+          subject: AWS Infrastructure Cleanup Notification
+          body: |
+            The AWS infrastructure has been cleaned up successfully.
+            Environment: ${{ github.event.inputs.env_option }}
+            Action: ${{ github.event.action }}
+            Run ID: ${{ github.run_id }}
+            Run URL: ${{ github.run_url }}
+  

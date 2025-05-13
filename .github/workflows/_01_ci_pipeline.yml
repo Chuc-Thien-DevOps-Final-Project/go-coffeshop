@@ -9,7 +9,7 @@ on:
         default: 'latest'
         type: string
 jobs:
-  build:
+  security_scan:
     runs-on: ubuntu-latest
     permissions: # <--- Add this block here
       contents: write # <--- This grants write access to repository content
@@ -69,6 +69,14 @@ jobs:
           The Trivy security scan has completed. Please find the attached report.
         attachments: trivy_report.json
 
+
+
+  push_image:
+    runs-on: ubuntu-latest
+    needs: security_scan
+    permissions: # <--- Add this block here
+      contents: write # <--- This grants write access to repository content
+    steps:
     - uses: actions/checkout@v4
     - name: Install AWS CLI
       run: |
@@ -92,7 +100,8 @@ jobs:
       run: |
         aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 492804330065.dkr.ecr.us-east-2.amazonaws.com
         #aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 271718395217.dkr.ecr.us-east-1.amazonaws.com
-    - name: Tag and push image
+
+    - name: Tag and push image to ECR
       run: |
 
         docker tag cuongopswat/go-coffeeshop-web:latest 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
@@ -101,6 +110,17 @@ jobs:
         #docker tag cuongopswat/go-coffeeshop-web:latest 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
         #docker push 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
         
+
+
+
+  update_manifest:
+    runs-on: ubuntu-latest
+    needs: push_image
+    permissions: # <--- Add this block here
+      contents: write # <--- This grants write access to repository content
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
     - name: Update manifest
       run: |
         ls
@@ -118,21 +138,22 @@ jobs:
         git config --global user.name "tranchucthien"
     - name: Push code to branch 
       run: |   
-         git config --global user.email "chucthien2@gmail.com"
-         git config --global user.name "tranchucthien"
-         git add docker-compose.yml
-         git add manifest/
-         git commit -m "Update image version for docker compose"
-         git push 
+        git config --global user.email "chucthien2@gmail.com"
+        git config --global user.name "tranchucthien"
+        git add docker-compose.yml
+        git add manifest/
+        git commit -m "Update image version for docker compose"
+        git push 
     # - name: Create Pull Request
     #   uses: peter-evans/create-pull-request@v7
-    - name: Create PR to branch test
+    - name: Create PR to branch main
       run: |
         sudo apt-get install gh -y
         gh auth login --with-token <<< "${{ secrets.GIT_TOKEN_KEY }}"
         VERSION="${{ inputs.image_version }}"
+        
         gh pr create \
-          --base test \
+          --base main \
           --head "$BRANCH_NAME" \
           --title "Update image go-coffeshop-web to version $VERSION" \
           --body "This PR updates the image version of go-coffeshop-web to version \`$VERSION\` in docker-compose and manifest"
