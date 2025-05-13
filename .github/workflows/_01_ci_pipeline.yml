@@ -103,7 +103,7 @@ jobs:
 
     - name: Tag and push image to ECR
       run: |
-        docker pull cuongopswat/go-coffeeshop-web:latest
+
         docker tag cuongopswat/go-coffeeshop-web:latest 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
         docker push 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
 
@@ -151,9 +151,28 @@ jobs:
         sudo apt-get install gh -y
         gh auth login --with-token <<< "${{ secrets.GIT_TOKEN_KEY }}"
         VERSION="${{ inputs.image_version }}"
-        
+
         gh pr create \
           --base main \
           --head "$BRANCH_NAME" \
           --title "Update image go-coffeshop-web to version $VERSION" \
           --body "This PR updates the image version of go-coffeshop-web to version \`$VERSION\` in docker-compose and manifest"
+
+  notification:
+    runs-on: ubuntu-latest
+    needs: update_manifest
+    steps:
+      - name: Send email notification
+        if: always()  # This ensures the email is sent even if the previous steps fail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}  # Add this as a secret in GitHub
+          password: ${{ secrets.SMTP_PASSWORD }}  # Add this as a secret in GitHub
+          from: ${{ secrets.SMTP_USERNAME }}
+          to: ${{ secrets.SMTP_USERNAME }}  # Change this to the recipient's email
+          subject: CI Pipeline Notification
+          body: |
+            The CI pipeline has completed successfully. The new image version is ${{ inputs.image_version }}.
+            Please check the pull request for more details at link: https://github.com/Chuc-Thien-DevOps-Final-Project/go-coffeshop/pulls
