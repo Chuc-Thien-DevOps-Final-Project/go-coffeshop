@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: rabbitmq
+  name: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: rabbitmq
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: rabbitmq
+    spec:
+      containers:
+        - envFrom:
+            - secretRef:
+                name: rabbitmq-creds
+          image: rabbitmq:3.11-management-alpine
+          livenessProbe:
+            exec:
+              command: ["rabbitmq-diagnostics", "-q", "ping"]
+              # command:
+              #   - rabbitmq-diagnostics
+              #   - -q
+              #   - ping
+            failureThreshold: 3
+            initialDelaySeconds: 30  # Đợi 30s trước khi kiểm tra lần đầu tiên
+            periodSeconds: 30       # Kiểm tra mỗi 30s
+            timeoutSeconds: 10      # Mỗi lần kiểm tra có thể mất tối đa 10s
+          name: rabbitmq
+          ports:
+            - containerPort: 5672
+              protocol: TCP
+            - containerPort: 15672
+              protocol: TCP
+      restartPolicy: Always

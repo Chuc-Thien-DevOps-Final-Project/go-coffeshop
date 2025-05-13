@@ -1,0 +1,5 @@
+resources:
+  - proxy-config.yaml
+  - proxy-deployment.yaml
+  - proxy-hpa.yaml
+  - proxy-service.yaml

@@ -1,0 +1,26 @@
+# custom-values.yaml
+deployment:
+  replicas: 2  # Số lượng pod Traefik
+ 
+ports:
+  web:
+    port: 8080    # HTTP
+  websecure:
+    port: 8443   # HTTPS
+  traefik:
+    port: 9000  # Dashboard (tùy chọn)
+ 
+ingressRoute:
+  dashboard:
+    enabled: true
+    entryPoints:
+      - web
+    match: Host(`opswat.chucthien.id.vn`) && PathPrefix(`/dashboard`)
+
+ 
+service:
+  type: LoadBalancer  # Dùng LoadBalancer để expose Traefik ra ngoài
+ 
+logs:
+  general:
+    level: INFO  # Cấp độ log

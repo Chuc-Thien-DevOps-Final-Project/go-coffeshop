@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: counter-config
+data:
+  APP_NAME: 'counter-service in docker'
+  IN_DOCKER: "true"
+  RABBITMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
+  PRODUCT_CLIENT_URL: 'product:5001'

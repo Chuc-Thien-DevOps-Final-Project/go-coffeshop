@@ -1,0 +1,10 @@
+resources:
+  - db-secret.yaml
+  - barista/
+  - counter/
+  - kitchen/
+  - product/
+  - proxy/
+  - rabbitmq/
+  - web/
+  - ingress/
