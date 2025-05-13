@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counter
+  labels:
+    io.kompose.service: counter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: counter
+  template:
+    metadata:
+      labels:
+        io.kompose.service: counter
+    spec:
+      containers:
+        - name: counter
+          image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-counter
+          ports:
+            - containerPort: 5002
+          envFrom:
+            - configMapRef:
+                name: counter-config
+            - secretRef:
+                name: postgres-db-creds
+      restartPolicy: Always

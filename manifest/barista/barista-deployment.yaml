@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: barista
+  name: barista
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: barista
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: barista
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: barista-config
+            - secretRef:
+                name: postgres-db-creds
+          image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-barista
+          name: barista
+      restartPolicy: Always

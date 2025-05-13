@@ -1,0 +1,21 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-prefix # Tên này PHẢI khớp với tên bạn dùng trong Ingress annotation
+  namespace: default # Namespace này PHẢI khớp với namespace của Ingress
+spec:
+  stripPrefix:
+    prefixes:
+      - /proxy # Đường dẫn bạn muốn loại bỏ
+
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-prefix-argocd # Tên này PHẢI khớp với tên bạn dùng trong Ingress annotation
+  namespace: argocd # Namespace này PHẢI khớp với namespace của Ingress
+spec:
+  stripPrefix:
+    prefixes:
+      - /argocd # Đường dẫn bạn muốn loại bỏ
