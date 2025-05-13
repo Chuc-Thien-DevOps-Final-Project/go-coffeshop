@@ -107,8 +107,9 @@ jobs:
         sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" docker-compose.yml
         cat docker-compose.yml | grep "image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web" docker-compose.yml
         ls
-        sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" manifest/web/web-deployment.yaml
         
+        sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" ./manifest/web/web-deployment.yaml
+        cat ./manifest/web/web-deployment.yaml
     - name: Login GitHub
       run: |
         echo "${{ secrets.GIT_TOKEN }}" > ~/.netrc
