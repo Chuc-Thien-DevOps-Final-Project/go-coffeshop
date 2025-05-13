@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: go-coffeshop # Name of the application that will be created in ArgoCD
+  namespace: argocd # Namespace where ArgoCD is installed
+spec:
+  project: default # Project name in ArgoCD
+
+  source:
+    repoURL: https://github.com/Chuc-Thien-DevOps-Final-Project/infrastructure
+    targetRevision: HEAD
+    path: manifest
+
+  destination: 
+    server: https://kubernetes.default.svc  # Kubernetes API server that ArgoCD will connect to
+    namespace: default # Namespace where the application will be deployed
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
+
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: proxy
+      namespace: default
+      jsonPointers:
+        - /spec/replicas
