@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: CI pipeline build new image
 
 on:
   workflow_dispatch:
@@ -121,6 +121,7 @@ jobs:
          git config --global user.email "chucthien2@gmail.com"
          git config --global user.name "tranchucthien"
          git add docker-compose.yml
+         git add manifest/
          git commit -m "Update image version for docker compose"
          git push 
     # - name: Create Pull Request
@@ -133,5 +134,5 @@ jobs:
         gh pr create \
           --base test \
           --head "$BRANCH_NAME" \
-          --title "Update image to version $VERSION" \
-          --body "This PR updates the image version to \`$VERSION\` in docker-compose.yml"
+          --title "Update image go-coffeshop-web to version $VERSION" \
+          --body "This PR updates the image version of go-coffeshop-web to version \`$VERSION\` in docker-compose and manifest"
