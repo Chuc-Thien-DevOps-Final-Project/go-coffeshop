@@ -1,0 +1,93 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Clean resources in AWS
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  # push:
+  #   branches: [ "test" ]
+  # pull_request:
+  #   branches: [ "test" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      env_option:
+        description: 'Choose env'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  cleaning_infrastructure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        run: |
+          git clone https://github.com/Chuc-Thien-DevOps-Final-Project/infrastructure.git
+        
+      - name: Set up SSH key
+        run: |
+          ls
+          cd infrastructure/terraform-infra/envs/dev
+          ls
+          echo "${{ secrets.SSH_KEY }}" > tct-ssh-key.pem
+          chmod 600 tct-ssh-key.pem
+          ls
+        
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+          
+      - name: Configure AWS CLI
+        run: |
+            # aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+            # aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            # aws configure set region us-east-1
+            # aws configure list
+            mkdir -p ~/.aws
+            touch ~/.aws/credentials
+            echo "${{ secrets.AWS_KEY }}" > ~/.aws/credentials
+            aws sts get-caller-identity
+            aws configure set region us-east-1
+        
+      - name: Install Terraform
+        run: |
+          sudo snap install terraform --classic
+          sudo terraform version
+
+      - name: Terraform Cleanup
+        run: |
+          ls
+          cd infrastructure/terraform-infra/envs/${{ github.event.inputs.env_option }}
+          ls
+          terraform init
+          terraform validate
+          terraform plan
+          terraform destroy -auto-approve
+
+      - name: Send email notification
+        if: always()  # This ensures the email is sent even if the previous steps fail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}  # Add this as a secret in GitHub
+          password: ${{ secrets.SMTP_PASSWORD }}  # Add this as a secret in GitHub
+          from: ${{ secrets.SMTP_USERNAME }}
+          to: ${{ secrets.SMTP_USERNAME }}  # Change this to the recipient's email
+          subject: AWS Infrastructure Cleanup Notification
+          body: |
+            The AWS infrastructure has been cleaned up successfully.
+            Environment: ${{ github.event.inputs.env_option }}
+            Action: ${{ github.event.action }}
+            Run ID: ${{ github.run_id }}
+            Run URL: ${{ github.run_url }}
+  
