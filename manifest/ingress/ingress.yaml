@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-go-coffeshop
+  namespace: default  
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: default-strip-prefix@kubernetescrd
+    
+spec:
+  rules:
+    - host: opswat.chucthien.id.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 8888
+          - path: /proxy
+            pathType: Prefix
+            backend:
+              service:
+                name: proxy
+                port:
+                  number: 5000
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-argocd-ns
+  namespace: argocd  
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: default-strip-prefix@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: argocd-strip-prefix-argocd@kubernetescrd
+    
+spec:
+  rules:
+    - host: opswat.chucthien.id.vn
+      http:
+        paths:
+          - backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80
+            path: /argocd
+            pathType: Prefix
+
