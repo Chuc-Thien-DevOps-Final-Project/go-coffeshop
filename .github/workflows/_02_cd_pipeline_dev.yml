@@ -124,6 +124,22 @@ jobs:
             # Khởi động Docker Compose
             docker-compose up -d
           EOF
+
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}  # Add this as a secret in GitHub
+          password: ${{ secrets.SMTP_PASSWORD }}  # Add this as a secret in GitHub
+          from: ${{ secrets.SMTP_USERNAME }}
+          to: ${{ secrets.SMTP_USERNAME }}  # Change this to the recipient's email
+          subject: CD pipeline deploy to dev env
+          body: |
+            The CD pipeline for deploying to the dev environment has been successfully completed.
+            The application is now running on the EC2 instance.
+            
+
           
           
 
