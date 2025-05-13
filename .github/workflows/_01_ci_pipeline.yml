@@ -103,7 +103,7 @@ jobs:
 
     - name: Tag and push image to ECR
       run: |
-
+        docker pull cuongopswat/go-coffeeshop-web:latest
         docker tag cuongopswat/go-coffeeshop-web:latest 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
         docker push 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
 
