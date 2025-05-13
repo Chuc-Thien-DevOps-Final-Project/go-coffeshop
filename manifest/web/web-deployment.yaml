@@ -32,4 +32,17 @@ spec:
           ports:
             - containerPort: 8888
               protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
       restartPolicy: Always
+      rollingUpdate:
+        maxUnavailable: 1  # means at least 1 pod will be available during the update 
+        maxSurge: 1  # means at most 1 pod will be created during the update
+
+# kubectl rollout status deployment web # to track the status of the deployment
+# kubectl rollout undo deployment web # to rollback the deployment
