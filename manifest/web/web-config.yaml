@@ -4,5 +4,7 @@ metadata:
   name: web-config
 data:
   # REVERSE_PROXY_URL: 'http://127.0.0.1:5000'
+
   REVERSE_PROXY_URL: 'http://opswat.chucthien.click/proxy'
   WEB_PORT: '8888'
+
