@@ -7,4 +7,4 @@ resources:
   - proxy/
   - rabbitmq/
   - web/
-  - ingress/
+  # - ingress/
