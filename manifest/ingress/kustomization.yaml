@@ -1,5 +1,5 @@
 resources:
-  - ingress.yaml
-  - ingress_middleware.yaml
+  # - ingress.yaml
+  # - ingress_middleware.yaml
   # - ingress_traefix_values.yaml
 

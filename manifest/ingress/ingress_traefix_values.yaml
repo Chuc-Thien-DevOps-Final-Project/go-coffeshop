@@ -13,9 +13,8 @@ ports:
 ingressRoute:
   dashboard:
     enabled: true
-    entryPoints:
-      - web
-    match: Host(`opswat.chucthien.id.vn`) && PathPrefix(`/dashboard`)
+    entryPoints: [websecure, web]
+    match: Host(`opswat.chucthien.click`) && PathPrefix(`/dashboard`)
 
  
 service:
