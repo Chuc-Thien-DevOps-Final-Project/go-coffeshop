@@ -7,4 +7,5 @@ resources:
   - proxy/
   - rabbitmq/
   - web/
+  - external_secret_operator/
   # - ingress/
