@@ -9,7 +9,7 @@ metadata:
     
 spec:
   rules:
-    - host: opswat.chucthien.id.vn
+    - host: opswat.chucthien.click
       http:
         paths:
           - path: /
@@ -41,7 +41,7 @@ metadata:
     
 spec:
   rules:
-    - host: opswat.chucthien.id.vn
+    - host: opswat.chucthien.click
       http:
         paths:
           - backend:
