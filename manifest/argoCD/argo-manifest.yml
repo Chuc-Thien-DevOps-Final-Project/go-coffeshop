@@ -32,7 +32,7 @@ spec:
 
     - group: apps
       kind: Deployment
-      name: web
+      name: web-frontend
       namespace: default
       jsonPointers:
         - /spec/replicas
