@@ -6,6 +6,8 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
     traefik.ingress.kubernetes.io/router.middlewares: default-strip-prefix@kubernetescrd
+    # traefik.ingress.kubernetes.io/router.tls: "true"
+    # traefik.ingress.kubernetes.io/router.tls.insecureSkipVerify: "true"
     
 spec:
   rules:
@@ -16,7 +18,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: web
+                name: web-frontend
                 port:
                   number: 8888
           - path: /proxy
@@ -26,29 +28,39 @@ spec:
                 name: proxy
                 port:
                   number: 5000
-
-
+    # - host: argocd.chucthien.click
+    #   http:
+    #     paths: 
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: argocd-server
+    #             # namespace: argocd
+    #             port:
+    #               number: 443
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-argocd-ns
-  namespace: argocd  
+  name: ingress-argocd
+  namespace: default
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
-    traefik.ingress.kubernetes.io/router.middlewares: default-strip-prefix@kubernetescrd
-    traefik.ingress.kubernetes.io/router.middlewares: argocd-strip-prefix-argocd@kubernetescrd
-    
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.insecureSkipVerify: "true"
 spec:
   rules:
-    - host: opswat.chucthien.click
+    - host: argocd.chucthien.click
       http:
         paths:
-          - backend:
+          - path: /
+            pathType: Prefix
+            backend:
               service:
                 name: argocd-server
                 port:
-                  number: 80
-            path: /argocd
-            pathType: Prefix
+                  number: 443
+
+
 

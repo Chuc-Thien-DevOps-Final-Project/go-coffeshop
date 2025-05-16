@@ -5,13 +5,13 @@ metadata:
     kompose.cmd: kompose convert -f docker-compose.yml
     kompose.version: 1.35.0 (HEAD)
   labels:
-    io.kompose.service: web
-  name: web
+    io.kompose.service: web-frontend
+  name: web-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: web
+      io.kompose.service: web-frontend
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -24,12 +24,12 @@ spec:
         kompose.cmd: kompose convert -f docker-compose.yml
         kompose.version: 1.35.0 (HEAD)
       labels:
-        io.kompose.service: web
+        io.kompose.service: web-frontend
     spec:
       containers:
         - envFrom:
             - configMapRef:
-                name: web-config
+                name: web-frontend-config
             - secretRef:
                 name: postgres-db-creds
 
