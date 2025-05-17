@@ -1,28 +1,31 @@
 name: CI pipeline build new image
 
 on:
-  workflow_dispatch:
-    inputs:
-      image_version:
-        description: 'Enter new image version (default: latest)'
-        required: true
-        default: 'latest'
-        type: string
+  # workflow_dispatch:
+  #   inputs:
+  #     image_version:
+  #       description: 'Enter new image version (default: latest)'
+  #       required: false
+  #       default: ''
+  #       type: string
+  push:
+    tags:
+      - 'v*'  # ex v1.0, v2.3.4, etc.
 jobs:
+
   security_scan:
     runs-on: ubuntu-latest
     permissions: # <--- Add this block here
       contents: write # <--- This grants write access to repository content
     steps:
-
     - name: Pull images
       run: |
-        docker pull cuongopswat/go-coffeeshop-web
-        # docker pull cuongopswat/go-coffeeshop-barista
-        # docker pull cuongopswat/go-coffeeshop-counter
-        # docker pull cuongopswat/go-coffeeshop-product
-        # docker pull cuongopswat/go-coffeeshop-proxy
-        # docker pull cuongopswat/go-coffeeshop-kitchen
+        docker pull chucthien03/go-coffeeshop-web
+        # docker pull chucthien03/go-coffeeshop-barista
+        # docker pull chucthien03/go-coffeeshop-counter
+        # docker pull chucthien03/go-coffeeshop-product
+        # docker pull chucthien03/go-coffeeshop-proxy
+        # docker pull chucthien03/go-coffeeshop-kitchen
         
         
     
@@ -42,18 +45,18 @@ jobs:
         sudo apt-get install trivy
     - name: Scan image by Trivy
       run: |
-        # # trivy image cuongopswat/go-coffeeshop-web --severity CRITICAL  #--exit-code 1
-        # trivy image cuongopswat/go-coffeeshop-barista --severity CRITICAL #--exit-code 1
-        # trivy image cuongopswat/go-coffeeshop-counter --severity CRITICAL #--exit-code 1
-        # trivy image cuongopswat/go-coffeeshop-product --severity CRITICAL #--exit-code 1
-        # trivy image cuongopswat/go-coffeeshop-proxy --severity CRITICAL #--exit-code 1
-        # trivy image cuongopswat/go-coffeeshop-kitchen --severity CRITICAL #--exit-code 1
-        trivy image cuongopswat/go-coffeeshop-web --severity CRITICAL --format json > trivy_report.json
-        # trivy image cuongopswat/go-coffeeshop-barista --severity CRITICAL --format json >> trivy_report.json
-        # trivy image cuongopswat/go-coffeeshop-counter --severity CRITICAL --format json >> trivy_report.json
-        # trivy image cuongopswat/go-coffeeshop-product --severity CRITICAL --format json >> trivy_report.json
-        # trivy image cuongopswat/go-coffeeshop-proxy --severity CRITICAL --format json >> trivy_report.json
-        # trivy image cuongopswat/go-coffeeshop-kitchen --severity CRITICAL --format json >> trivy_report.json
+        # # trivy image chucthien03/go-coffeeshop-web --severity CRITICAL  #--exit-code 1
+        # trivy image chucthien03/go-coffeeshop-barista --severity CRITICAL #--exit-code 1
+        # trivy image chucthien03/go-coffeeshop-counter --severity CRITICAL #--exit-code 1
+        # trivy image chucthien03/go-coffeeshop-product --severity CRITICAL #--exit-code 1
+        # trivy image chucthien03/go-coffeeshop-proxy --severity CRITICAL #--exit-code 1
+        # trivy image chucthien03/go-coffeeshop-kitchen --severity CRITICAL #--exit-code 1
+        trivy image chucthien03/go-coffeeshop-web --severity CRITICAL --format json > trivy_report.json
+        # trivy image chucthien03/go-coffeeshop-barista --severity CRITICAL --format json >> trivy_report.json
+        # trivy image chucthien03/go-coffeeshop-counter --severity CRITICAL --format json >> trivy_report.json
+        # trivy image chucthien03/go-coffeeshop-product --severity CRITICAL --format json >> trivy_report.json
+        # trivy image chucthien03/go-coffeeshop-proxy --severity CRITICAL --format json >> trivy_report.json
+        # trivy image chucthien03/go-coffeeshop-kitchen --severity CRITICAL --format json >> trivy_report.json
         
     - name: Send email with Trivy report
       uses: dawidd6/action-send-mail@v3
@@ -103,11 +106,17 @@ jobs:
 
     - name: Tag and push image to ECR
       run: |
-        docker pull cuongopswat/go-coffeeshop-web:latest
-        docker tag cuongopswat/go-coffeeshop-web:latest 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
-        docker push 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
+        TAG=${{ github.ref_name }} 
+        echo $TAG
+        docker pull chucthien03/go-coffeeshop-web:latest
+        
+        docker tag chucthien03/go-coffeeshop-web:latest 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:$TAG
+        docker push 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:$TAG
+        
+        # docker tag chucthien03/go-coffeeshop-web:latest 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
+        # docker push 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
 
-        #docker tag cuongopswat/go-coffeeshop-web:latest 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
+        #docker tag chucthien03/go-coffeeshop-web:latest 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
         #docker push 271718395217.dkr.ecr.us-east-1.amazonaws.com/go-coffeeshop-web:${{ inputs.image_version }}
         
 
@@ -121,14 +130,19 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        ref: dev
     - name: Update manifest
       run: |
+        
+        TAG=${{ github.ref_name }} 
+        echo $TAG
         ls
-        sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" docker-compose.yml
+        sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:$TAG|" docker-compose.yml
         cat docker-compose.yml | grep "image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web" docker-compose.yml
         ls
         
-        sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:${{ inputs.image_version }}|" ./manifest/web/web-deployment.yaml
+        sed -i -E "s|(image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web)(:.*)?|\1:$TAG|" ./manifest/web/web-deployment.yaml
         cat ./manifest/web/web-deployment.yaml
     - name: Login GitHub
       run: |
@@ -150,7 +164,9 @@ jobs:
       run: |
         sudo apt-get install gh -y
         gh auth login --with-token <<< "${{ secrets.GIT_TOKEN_KEY }}"
-        VERSION="${{ inputs.image_version }}"
+        TAG=${{ github.ref_name }} 
+        echo $TAG
+        VERSION="$TAG"
 
         gh pr create \
           --base main \
