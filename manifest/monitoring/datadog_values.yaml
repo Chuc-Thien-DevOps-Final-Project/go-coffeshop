@@ -1,0 +1,15 @@
+datadog:
+  apiKeyExistingSecret: "datadog-secret"
+  site: "us5.datadoghq.com"
+
+clusterAgent:
+  confd:
+    kube_apiserver_metrics.yaml: |-
+      advanced_ad_identifiers:
+        - kube_endpoints:
+            name: "kubernetes"
+            namespace: "default"
+      cluster_check: true
+      init_config:
+      instances:
+        - prometheus_url: "https://%%host%%:%%port%%/metrics"      
