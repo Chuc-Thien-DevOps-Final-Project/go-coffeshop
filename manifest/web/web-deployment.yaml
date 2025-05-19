@@ -33,7 +33,7 @@ spec:
             - secretRef:
                 name: postgres-db-creds
 
-          image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:v1.1
+          image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-web:v2.0
           name: web
           ports:
             - containerPort: 8888
