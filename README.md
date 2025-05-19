@@ -60,6 +60,10 @@ docker-compose -f docker-compose-public.yml up -d
 ```
 
 ✅ **Benefit:** Ideal for testing and development without requiring AWS credentials.
+- ### Docker compose run
+  ![ Docker compose run](images/compose1.png)
+- ### Localhost
+  ![Localhost](images/compose2.png)
 
 -----
 
@@ -78,7 +82,8 @@ Contains manifests for setting up ArgoCD in the Kubernetes cluster.
     kubectl create namespace argocd
 
     # Deploys ArgoCD components into the 'argocd' namespace.
-    kubectl apply -n argocd -f [https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml](https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml)
+    # kubectl apply -f manifest/argoCD/install.yaml
+    kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
     # Retrieves the initial admin password for ArgoCD.
     argocd admin initial-password -n argocd
@@ -95,32 +100,14 @@ Contains manifests for setting up ArgoCD in the Kubernetes cluster.
     # Creates/updates the ArgoCD Application resource.
     kubectl apply -n argocd -f argoCD/argo-manifest.yml
     ```
-
-
-### 📂 `product/`, `counter/`, `barista/`, `kitchen/`, `web/`, `proxy/`
-
-Each directory represents a CoffeeShop service and includes:
-
-  - `*-deployment.yaml`: Kubernetes Deployment for managing service pods.
-  - `*-config.yaml`: Kubernetes ConfigMap or Secret for service configuration.
-  - Service Definition (`*-service.yaml`): Exposes the service within the cluster (if needed).
-  - `kustomization.yaml`: Kustomize file for environment-specific customizations.
-
-### 📂 `rabbitmq/`
-
-Manifests for deploying the RabbitMQ message broker:
-
-  - Deployment definition for RabbitMQ pods.
-  - Service definition to expose RabbitMQ.
-  - ConfigMap for RabbitMQ configuration.
-
-### 📂 `external_secret_operator/`
-
-Integration with AWS Secrets Manager using the External Secrets Operator:
-
-  - `ExternalSecret` resources to fetch secrets.
-  - `SecretStore` configuration for AWS Secrets Manager connection.
-  - `kustomization.yaml` to manage External Secrets.
+- ### Argo CD Applications 
+  ![Argo CD Applications List](images/argocd1.png)
+- ### Argo CD Application Details - Resource Tree
+  ![ Argo CD Application Details - Resource Tree](images/argocd2.png)
+- ### Argo CD Application Details - Node View
+  ![Argo CD Application Details - Node View](images/argocd3.png)
+- ### Argo CD Application Details - Network View
+  ![Argo CD Application Details - Network View](images/argocd4.png)
 
 ### 📂 `ingress/`
 
@@ -130,34 +117,72 @@ Ingress routing configuration using Traefik:
   - Middleware configurations for request handling.
   - Value overrides for Traefik Helm chart (if used).
 
-### 🛠 Applying Kubernetes Manifests (Production)
+```bash
+helm repo add traefik https://traefik.github.io/charts
+kubectl create namespace traefik
+helm upgrade --install traefik traefik/traefik   -n traefik -f ingress_traefix_values.yaml
+kubectl apply -f ingress.yaml -f ingress_middleware.yaml 
+```
 
-Choose the method based on your deployment strategy:
+### 📂 `monitoring/`
+Helm chart value for monitoring system using Datadog.
+```bash
+helm repo add datadog https://helm.datadoghq.com
+helm repo update
+kubectl create secret generic datadog-secret --from-literal api-key=<DATADOG_API_KEY>
+helm install datadog-agent -f datadog-values.yaml datadog/datadog
 
-**Using ArgoCD (Recommended):**
+```
+- ### Datadog Kubernetes Overview
+  ![Datadog Kubernetes Overview](images/datadog1.png)
+- ### Datadog Kubernetes Nodes Overview
+  ![Datadog Kubernetes Nodes Overview](images/datadog2.png)
+- ### Datadog Kubernetes Pods Overview
+  ![Datadog Kubernetes Pods Overview](images/datadog3.png)
+- ### Datadog Monitor Status - HPA Max Replicas
+  ![Datadog Monitor Status - HPA Max Replicas](images/datadog4.png)
+- ### Datadog Alert - HPA Max Replicas Reached
+  ![ Datadog Alert - HPA Max Replicas Reached](images/datadog5.png)
+- ### Datadog Alert - HPA Max Replicas Recoverd
+  ![ Datadog Alert - HPA Max Replicas Recover](images/datadog6.png)
 
-1.  Install ArgoCD:
+### 📂 `product/`, `counter/`, `barista/`, `kitchen/`, `web/`, `proxy/`
 
-    ```
-    kubectl apply -f manifest/argoCD/install.yaml
-    ```
+Each directory represents a CoffeeShop service and includes:
 
-2.  Create the ArgoCD Application to manage CoffeeShop services:
+  - `*-deployment.yaml`: Kubernetes Deployment for managing service pods.
+  - `*-config.yaml`: Kubernetes ConfigMap or Secret for service configuration.
+  - Service Definition (`*-service.yaml`): Exposes the service within the cluster (if needed).
+  - `*-hpa.yaml`: Kubernetes Horizontal Pod Autoscaler (HPA) configuration. An HPA is used to automatically scale the number of pods in a deployment or replica set based on observed metrics, such as CPU or memory usage, or custom application metrics.
+  - `kustomization.yaml`: Kustomize file for environment-specific customizations.
 
-    ```
-    kubectl apply -f manifest/argoCD/argo-manifest.yml
-    ```
+### 📂 `rabbitmq/`
 
-**Applying Manually:**
+Manifests for deploying the RabbitMQ message broker:
 
-  - Apply all manifests using `kubectl` and Kustomize:
+  - Deployment definition for RabbitMQ pods.
+  - Service definition to expose RabbitMQ.
+  - ConfigMap for RabbitMQ configuration.
+  - HPA configuration 
 
-    ```
-    kubectl apply -f manifest/argoCD/argo-manifest.yml
-    ```
+### 📂 `external_secret_operator/`
 
+Integration with AWS Secrets Manager using the External Secrets Operator:
 
----
+  - `ExternalSecret` resources to fetch secrets.
+  - `SecretStore` configuration for AWS Secrets Manager connection.
+  - `kustomization.yaml` to manage External Secrets.
+
+```bash
+  helm repo add external-secrets https://charts.external-secrets.io
+
+  helm install external-secrets \
+    external-secrets/external-secrets \
+      -n external-secrets \
+      --create-namespace \
+      --set installCRDs=true
+
+```
 
 ## 📂 Locust/
 This directory contains Locust files used for load testing the application.
@@ -216,3 +241,6 @@ For any questions or assistance, please feel free to reach out.
 
 ## 📬 References
 https://argo-cd.readthedocs.io/en/stable/getting_started/
+
+https://docs.datadoghq.com/containers/kubernetes/installation/?tab=helm
+https://external-secrets.io/v0.4.4/guides-getting-started/
