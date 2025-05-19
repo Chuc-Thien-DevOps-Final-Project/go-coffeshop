@@ -4,14 +4,13 @@ This document outlines the deployment procedures for the Go CoffeeShop applicati
 
 ---
 
-## 📜 Menu
+## 📜 Tables of contents
 
 -   **📦 Local Development Environment (Docker Compose)**
     -   🔹 `docker-compose.yml` (Private ECR Images)
     -   🔹 `docker-compose-public.yml` (Public DockerHub Images)
 -   **📁 Production Deployment (Kubernetes on EKS)**
     -   📂 `argoCD/`
-    -   📂 `external_secret_operator/`
     -   📂 `ingress/`
     -   📂 `monitoring/`
     -   📂 `manifest/`
@@ -22,13 +21,13 @@ This document outlines the deployment procedures for the Go CoffeeShop applicati
         -   📂 `web/`
         -   📂 `proxy/`
         -   📂 `rabbitmq/`
+        -   📂 `external_secret_operator/`
 
     -   🛠 Applying Kubernetes Manifests (Production)
         -   Using ArgoCD and Helm
         -   Applying Manually
 -   **📂 Locust**
 -   **📄 Notes**
--   **📚 Public DockerHub Images**
 -   **📬 Contact**
 
 ---
@@ -237,10 +236,13 @@ To run this, you would save the code as a Python file (e.g., `locustfile.py`) an
 
 ## 📬 Contact
 
-For any questions or assistance, please feel free to reach out.
+For any questions or assistance, please feel free to reach out through the following channels:
+
+* **LinkedIn:** [TranChucThien](https://www.linkedin.com/in/tranchucthien/)
+* **Email:** chucthien2@gmail.com
 
 ## 📬 References
-https://argo-cd.readthedocs.io/en/stable/getting_started/
-
-https://docs.datadoghq.com/containers/kubernetes/installation/?tab=helm
-https://external-secrets.io/v0.4.4/guides-getting-started/
+* **Argo CD:** [Getting Started Guide](https://argo-cd.readthedocs.io/en/stable/getting_started/)
+* **Datadog on Kubernetes:** [Installation Guide](https://docs.datadoghq.com/containers/kubernetes/installation/?tab=helm)
+* **External Secrets Operator:** [Getting Started Guide](https://external-secrets.io/v0.4.4/guides-getting-started/), [Kubernetes Secrets Management with ESO](https://www.youtube.com/watch?v=EonWeoFPpvM)
+* **Traefik:** [Installation Guide](https://github.com/traefik/traefik-helm-chart)
