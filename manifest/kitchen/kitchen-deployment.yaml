@@ -28,4 +28,11 @@ spec:
               name: postgres-db-creds
           image: 492804330065.dkr.ecr.us-east-2.amazonaws.com/go-coffeeshop-kitchen
           name: kitchen
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
       restartPolicy: Always
