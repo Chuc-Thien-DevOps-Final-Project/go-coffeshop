@@ -1,0 +1,25 @@
+# custom-values.yaml
+deployment:
+  replicas: 2  # Number of replicas for Traefik
+ 
+ports:
+  web:
+    port: 8080    # HTTP
+  websecure:
+    port: 8443   # HTTPS
+  traefik:
+    port: 9000  # Dashboard 
+ 
+ingressRoute:
+  dashboard:
+    enabled: true
+    entryPoints: [websecure, web]
+    matchRule: Host(`opswat.chucthien.click`) && PathPrefix(`/dashboard`)
+
+ 
+service:
+  type: LoadBalancer 
+ 
+logs:
+  general:
+    level: INFO  

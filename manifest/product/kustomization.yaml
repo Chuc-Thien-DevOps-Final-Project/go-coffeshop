@@ -2,3 +2,4 @@ resources:
   - product-config.yaml
   - product-deployment.yaml
   - product-service.yaml
+  - product-hpa.yaml

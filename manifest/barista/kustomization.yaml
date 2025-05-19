@@ -1,3 +1,4 @@
 resources:
   - barista-config.yaml
   - barista-deployment.yaml
+  - barista-hpa.yaml
