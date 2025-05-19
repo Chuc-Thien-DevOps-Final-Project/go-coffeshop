@@ -25,6 +25,13 @@ spec:
             - secretRef:
                 name: rabbitmq-creds
           image: rabbitmq:3.11-management-alpine
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
           livenessProbe:
             exec:
               command: ["rabbitmq-diagnostics", "-q", "ping"]
