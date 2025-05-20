@@ -6,35 +6,29 @@ This document outlines the deployment procedures for the Go CoffeeShop applicati
 
 ## 📜 Tables of contents
 
--   **📦 Local Development Environment (Docker Compose)**
-    -   🔹 `docker-compose.yml` (Private ECR Images)
-    -   🔹 `docker-compose-public.yml` (Public DockerHub Images)
--   **📁 Production Deployment (Kubernetes on EKS)**
-    -   📂 `argoCD/`
-    -   📂 `ingress/`
-    -   📂 `monitoring/`
-    -   📂 `manifest/`
-        -   📂 `product/`
-        -   📂 `counter/`
-        -   📂 `barista/`
-        -   📂 `kitchen/`
-        -   📂 `web/`
-        -   📂 `proxy/`
-        -   📂 `rabbitmq/`
-        -   📂 `external_secret_operator/`
-
-    -   🛠 Applying Kubernetes Manifests (Production)
-        -   Using ArgoCD and Helm
-        -   Applying Manually
--   **📂 Locust**
--   **📄 Notes**
--   **📬 Contact**
+-   [**1. Local Development Environment (Docker Compose)**](#-1-local-development-environment-docker-compose)
+-   [**2. Production Deployment (Kubernetes on EKS)**]()
+    -   [📂 `argoCD/`](#-argocd)
+    -   [📂 `ingress/`](#-ingress)
+    -   [📂 `monitoring/`](#-monitoring)
+    -   [📂 `manifest/`](#-manifest)
+        -   📂 [`product/`](#-product-counter-barista-kitchen-web-proxy)
+        -   📂 [`counter/`](#-product-counter-barista-kitchen-web-proxy)
+        -   📂 [`barista/`](#-product-counter-barista-kitchen-web-proxy)
+        -   📂 [`kitchen/`](#-product-counter-barista-kitchen-web-proxy)
+        -   📂 [`web/`](#-product-counter-barista-kitchen-web-proxy)
+        -   📂 [`proxy/`](#-product-counter-barista-kitchen-web-proxy)
+        -   📂 [`rabbitmq/`](#-rabbitmq) 
+        -   📂 [`external_secret_operator/`](#-external_secret_operator)
+-   [**3. Load test with Locust**](#-locust)
+-   [**📄 Notes**](#-notes)
+-   [**📬 Contact**](#-contact)
 
 ---
 
-## 📦 Local Development Environment (Docker Compose)
+## 📦 1. Local Development Environment (Docker Compose)
 
-Two `docker-compose` configurations are provided to facilitate local development and EC2 setups. After run these commands bellow, the web will availabel at http://localhost:8888
+Two `docker-compose` configurations are provided to facilitate local development and EC2 setups. After run these commands bellow, the website will be availabe at http://localhost:8888
 
 ### 🔹 `docker-compose.yml` (Private ECR Images)
 
@@ -66,7 +60,7 @@ docker-compose -f docker-compose-public.yml up -d
 
 -----
 
-## 📁 Production Deployment (Kubernetes on EKS)
+## 📁 2. Production Deployment (Kubernetes on EKS)
 Kubernetes manifests for production deployment are organized within the `manifest/` directory, structured by component and feature.
 ### 📂 `argoCD/`
 
@@ -145,7 +139,11 @@ helm install datadog-agent -f datadog-values.yaml datadog/datadog
 - ### Datadog Alert - HPA Max Replicas Recoverd
   ![ Datadog Alert - HPA Max Replicas Recover](images/datadog6.png)
 
-### 📂 `product/`, `counter/`, `barista/`, `kitchen/`, `web/`, `proxy/`
+---
+
+### 📂 `manifest\`
+Note: All Kubernetes manifest files located within the 📂manifest/ directory (including product/, counter/, barista/, kitchen/, web/, proxy/, rabbitmq/, and external_secret_operator/) are managed by ArgoCD. ArgoCD continuously monitors these files in the Git repository and automatically deploys and synchronizes the corresponding resources to EKS cluster, ensuring desired application state is always maintained.
+#### 📂 `product/`, `counter/`, `barista/`, `kitchen/`, `web/`, `proxy/`
 
 Each directory represents a CoffeeShop service and includes:
 
@@ -155,7 +153,7 @@ Each directory represents a CoffeeShop service and includes:
   - `*-hpa.yaml`: Kubernetes Horizontal Pod Autoscaler (HPA) configuration. An HPA is used to automatically scale the number of pods in a deployment or replica set based on observed metrics, such as CPU or memory usage, or custom application metrics.
   - `kustomization.yaml`: Kustomize file for environment-specific customizations.
 
-### 📂 `rabbitmq/`
+#### 📂 `rabbitmq/`
 
 Manifests for deploying the RabbitMQ message broker:
 
@@ -164,7 +162,7 @@ Manifests for deploying the RabbitMQ message broker:
   - ConfigMap for RabbitMQ configuration.
   - HPA configuration 
 
-### 📂 `external_secret_operator/`
+#### 📂 `external_secret_operator/`
 
 Integration with AWS Secrets Manager using the External Secrets Operator:
 
@@ -182,8 +180,9 @@ Integration with AWS Secrets Manager using the External Secrets Operator:
       --set installCRDs=true
 
 ```
+---
 
-## 📂 Locust/
+### 📂3. Load test with `locust/`
 This directory contains Locust files used for load testing the application.
 
 **What is it?**
@@ -224,6 +223,7 @@ To run this, you would save the code as a Python file (e.g., `locustfile.py`) an
 
 - ### Locust Load Test Charts
   ![Locust Load Test Charts](images/locust3.png)
+  
 ---
 
 ## 📄 Notes
@@ -240,9 +240,10 @@ For any questions or assistance, please feel free to reach out through the follo
 
 * **LinkedIn:** [TranChucThien](https://www.linkedin.com/in/tranchucthien/)
 * **Email:** chucthien2@gmail.com
-
+---
 ## 📬 References
 * **Argo CD:** [Getting Started Guide](https://argo-cd.readthedocs.io/en/stable/getting_started/)
 * **Datadog on Kubernetes:** [Installation Guide](https://docs.datadoghq.com/containers/kubernetes/installation/?tab=helm)
 * **External Secrets Operator:** [Getting Started Guide](https://external-secrets.io/v0.4.4/guides-getting-started/), [Kubernetes Secrets Management with ESO](https://www.youtube.com/watch?v=EonWeoFPpvM)
 * **Traefik:** [Installation Guide](https://github.com/traefik/traefik-helm-chart)
+---
