@@ -5,10 +5,10 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: standard
+  storageClassName: {{ .Values.postgres.pvc.storageClassName }}
   resources:
     requests:
-      storage: 5Gi
+      storage: {{ .Values.postgres.pvc.size }}
 
 
 ---
@@ -17,7 +17,7 @@ kind: Deployment
 metadata:
   name: postgres
 spec:
-  replicas: 1
+  replicas: {{ .Values.postgres.deployment.replicas }}
   selector:
     matchLabels:
       app: postgres
@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres:14-alpine
+        image: {{ .Values.postgres.deployment.image }}
         ports:
         - containerPort: 5432
         env:
