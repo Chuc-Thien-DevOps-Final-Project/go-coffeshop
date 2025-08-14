@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kitchen-config
-data:
-  APP_NAME: 'kitchen-service in docker'
-  IN_DOCKER: "true"
-  RABBITMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
