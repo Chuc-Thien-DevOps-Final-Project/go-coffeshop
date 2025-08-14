@@ -1,0 +1,80 @@
+barista:
+  image: "chucthien03/go-coffeeshop-barista"
+  replicas: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  restartPolicy: Always
+  configMap:
+    RABBITMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
+  hpa:
+    minReplicas: 1
+    maxReplicas: 5
+    metrics:
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+
+counter:
+  image: "chucthien03/go-coffeeshop-counter"
+  replicas: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  restartPolicy: Always
+  configMap:
+    RABBITMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
+    PRODUCT_CLIENT_URL: 'product:5001'
+  hpa:
+    minReplicas: 1
+    maxReplicas: 5
+    metrics:
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+  service:
+    ports:
+      name: "5002"
+      port: 5002
+      targetPort: 5002
+
+kitchen:
+  image: "chucthien03/go-coffeeshop-kitchen"
+  replicas: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  restartPolicy: Always
+  configMap:
+    RABBITMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
+    PRODUCT_CLIENT_URL: 'product:5001'
+  hpa:
+    minReplicas: 1
+    maxReplicas: 5
+    metrics:
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+  service:
+    ports:
+      name: "5003"
+      port: 5003
+      targetPort: 5003

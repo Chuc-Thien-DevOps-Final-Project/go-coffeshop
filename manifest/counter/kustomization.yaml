@@ -1,5 +1,0 @@
-resources:
-  - counter-config.yaml
-  - counter-deployment.yaml
-  - counter-service.yaml
-  - counter-hpa.yaml

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: counter-config
+data:
+  APP_NAME: 'counter-service in docker'
+  IN_DOCKER: "true"
+  RABBITMQ_URL: {{ .Values.counter.configMap.RABBITMQ_URL }}
+  PRODUCT_CLIENT_URL: {{ .Values.counter.configMap.PRODUCT_CLIENT_URL }}

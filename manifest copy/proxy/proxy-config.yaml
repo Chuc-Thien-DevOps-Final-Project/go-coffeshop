@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxy-config
+data:
+  APP_NAME: 'proxy-service in docker'
+  GRPC_PRODUCT_HOST: 'product'
+  GRPC_PRODUCT_PORT: '5001'
+  GRPC_COUNTER_HOST: 'counter'
+  GRPC_COUNTER_PORT: '5002'

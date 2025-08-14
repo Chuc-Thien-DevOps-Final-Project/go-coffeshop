@@ -5,7 +5,7 @@ metadata:
   labels:
     io.kompose.service: counter
 spec:
-  replicas: 1
+  replicas: {{ .Values.counter.deployment.replicas }}
   selector:
     matchLabels:
       io.kompose.service: counter
@@ -16,14 +16,14 @@ spec:
     spec:
       containers:
         - name: counter
-          image: chucthien03/go-coffeeshop-counter
+          image: {{ .Values.counter.deployment.image }}
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: {{ .Values.counter.deployment.resources.requests.cpu }}
+              memory: {{ .Values.counter.deployment.resources.requests.memory }}
             limits:
-              cpu: 200m
-              memory: 256Mi
+              cpu: {{ .Values.counter.deployment.resources.limits.cpu }}
+              memory: {{ .Values.counter.deployment.resources.limits.memory }}
           ports:
             - containerPort: 5002
           envFrom:

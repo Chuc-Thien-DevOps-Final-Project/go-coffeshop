@@ -1,5 +1,0 @@
-resources:
-  - rabbitmq-config.yaml
-  - rabbitmq-deployment.yaml
-  # - rabbitmq-secret.yaml
-  - rabbitmq-service.yaml

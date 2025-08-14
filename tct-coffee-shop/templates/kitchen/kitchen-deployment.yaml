@@ -8,7 +8,7 @@ metadata:
     io.kompose.service: kitchen
   name: kitchen
 spec:
-  replicas: 1
+  replicas: {{ .Values.kitchen.deployment.replicas }}
   selector:
     matchLabels:
       io.kompose.service: kitchen
@@ -26,13 +26,13 @@ spec:
               name: kitchen-config
           - secretRef:
               name: postgres-db-creds
-          image: chucthien03/go-coffeeshop-kitchen
+          image: {{ .Values.kitchen.deployment.image }}
           name: kitchen
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: {{ .Values.kitchen.deployment.resources.requests.cpu }}
+              memory: {{ .Values.kitchen.deployment.resources.requests.memory }}
             limits:
-              cpu: 200m
-              memory: 256Mi
+              cpu: {{ .Values.kitchen.deployment.resources.limits.cpu }}
+              memory: {{ .Values.kitchen.deployment.resources.limits.memory }}
       restartPolicy: Always

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-test
+  template:
+    metadata:
+      labels:
+        app: postgres-test
+    spec:
+      containers:
+      - name: test
+        image: postgres:14-alpine
+        command: ["sleep", "3600"] # giữ pod chạy để exec vào
+        env:
+        - name: PG_URL
+          valueFrom:
+            secretKeyRef:
+              name: postgres-db-creds
+              key: PG_URL
+        - name: PG_DSN_URL
+          valueFrom:
+            secretKeyRef:
+              name: postgres-db-creds
+              key: PG_DSN_URL

@@ -1,0 +1,71 @@
+barista:
+  deployment:
+    replicas: 1
+    image: "chucthien03/go-coffeeshop-barista"
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+    restartPolicy: Always
+  hpa:
+      minReplicas: 1
+      maxReplicas: 5
+      metrics:
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 60
+
+counter:
+  deployment:
+    replicas: 1
+    image: "chucthien03/go-coffeeshop-counter"
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+  configMap:
+      # RABBITMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
+      # PRODUCT_CLIENT_URL: 'product:5001'
+  hpa:
+      minReplicas: 1
+      maxReplicas: 5
+      metrics:
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 60
+
+kitchen:
+  deployment:
+    replicas: 1
+    image: "chucthien03/go-coffeeshop-kitchen"
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+    restartPolicy: Always
+  configMap:
+    APP_NAME: 'kitchen-service in docker'
+    IN_DOCKER: "true"
+    RABBITMQ_URL: 'amqp://guest:guest@rabbitmq:5672/'
+  hpa:
+      minReplicas: 1
+      maxReplicas: 5
+      metrics:
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 60

@@ -8,7 +8,7 @@ metadata:
     io.kompose.service: barista
   name: barista
 spec:
-  replicas: 1
+  replicas: {{ .Values.barista.replicas  }}
   selector:
     matchLabels:
       io.kompose.service: barista
@@ -26,13 +26,13 @@ spec:
                 name: barista-config
             - secretRef:
                 name: postgres-db-creds
-          image: chucthien03/go-coffeeshop-barista
+          image: {{ .Values.barista.image }}
           name: barista
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: {{ .Values.barista.resources.requests.cpu }}
+              memory: {{ .Values.barista.resources.requests.memory }}
             limits:
-              cpu: 200m
-              memory: 256Mi
-      restartPolicy: Always
+              cpu: {{ .Values.barista.resources.limits.cpu }}
+              memory: {{ .Values.barista.resources.limits.memory }}
+      restartPolicy: {{ .Values.barista.restartPolicy }}

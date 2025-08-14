@@ -1,4 +1,0 @@
-resources:
-  - kitchen-config.yaml
-  - kitchen-deployment.yaml
-  - kitchen-hpa.yaml

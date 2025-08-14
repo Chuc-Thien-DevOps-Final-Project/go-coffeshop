@@ -5,7 +5,7 @@ metadata:
   labels:
     io.kompose.service: counter
 spec:
-  replicas: 1
+  replicas: {{ .Values.counter.replicas }}
   selector:
     matchLabels:
       io.kompose.service: counter
@@ -16,19 +16,19 @@ spec:
     spec:
       containers:
         - name: counter
-          image: chucthien03/go-coffeeshop-counter
+          image: {{ .Values.counter.image }}
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: {{ .Values.counter.resources.requests.cpu }}
+              memory: {{ .Values.counter.resources.requests.memory }}
             limits:
-              cpu: 200m
-              memory: 256Mi
+              cpu: {{ .Values.counter.resources.limits.cpu }}
+              memory: {{ .Values.counter.resources.limits.memory }}
           ports:
-            - containerPort: 5002
+            - containerPort: {{ .Values.counter.ports.containerPort }}
           envFrom:
             - configMapRef:
                 name: counter-config
             - secretRef:
                 name: postgres-db-creds
-      restartPolicy: Always
+      restartPolicy: {{ .Values.counter.restartPolicy }}
